@@ -24,10 +24,11 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0' //쿼리 파라미터 로그 남기기 위한 라이브러리 -> 운영에서는 성능 테스트를 해보고 괜찮으면 사용
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test' //junit5
 }
 
 tasks.named('test') {
