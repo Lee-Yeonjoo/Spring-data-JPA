@@ -53,4 +53,10 @@ public class MemberJpaRepository {
                 .setParameter("age", age)
                 .getResultList(); //순수jpa에서는 직접 짜야되는데 스프링 데이터 jpa는 쿼리 메소드 기능으로 알아서 만든다.
     }
+
+    public List<Member> findByUsername(String username) {
+        return em.createNamedQuery("Member.findByUsername", Member.class) //네임드 쿼리 사용
+                .setParameter("username", username)
+                .getResultList();
+    }
 }

@@ -7,6 +7,10 @@ import lombok.*;
 @Getter @Setter //setter는 없는게 좋다.
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "username", "age"}) //toString 만들어줌 -> team 적으면 안된다 무한 루프가 됨 가급적 연관관계 필드는 toString에서 빼는게 좋다.
+@NamedQuery(
+        name="Member.findByUsername", //이름은 아무거나 가능. 관례상 엔티티명.메소드명
+        query="select m from Member m where m.username = :username"
+)
 public class Member {
 
     @Id @GeneratedValue
