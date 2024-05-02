@@ -11,6 +11,7 @@ import study.datajpa.entity.Team;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -145,4 +146,24 @@ class MemberRepositoryTest {
         }
     }
 
+    @Test
+    public void returnType() {
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("BBB", 20);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        List<Member> aaa = memberRepository.findListByUsername("AAA"); //컬렉션 반환
+        Member a = memberRepository.findMemberByUsername("AAA"); //단건 반환
+        System.out.println("findMember = " + a);
+        Optional<Member> aa = memberRepository.findOptionalByUsername("AAA"); //옵셔널은 없는 경우 Optional.empty. 데이터가 있을 수도 없을 수도 있으면 Optional을 쓰자
+        //단건 조회에서 두 개 이상이 조회되면 exception 터진다.
+
+        List<Member> result = memberRepository.findListByUsername("dfsfa"); //조회할 게 없으면 그냥 빈 리스트가 조회되니 굳이 if문으로 검사할 필요 없다!
+        System.out.println("result = "+result.size());
+
+        Member findMember = memberRepository.findMemberByUsername("dfsdfe"); //단건인 경우 결과가 없으면 null이다.
+        System.out.println("findMember = "+findMember ); //null이다. 순수JPA는 NoResultException이 터진다.
+
+    }
 }
