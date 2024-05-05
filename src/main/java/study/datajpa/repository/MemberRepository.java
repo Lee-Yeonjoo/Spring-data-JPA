@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
@@ -43,4 +44,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query(value = "select m from Member m left join m.team t", countQuery = "select count(m.username) from Member m") //카운트 쿼리를 분리해서 성능 향상시킬 수 있다.
     Page<Member> findByAge(int age, Pageable pageable);
+
+    //clearAutomatically = true를 하면 벌크연산 후에 자동으로 clear()를 호출한다.
+    @Modifying(clearAutomatically = true) //executeUpdate()를 호출해준다. 이 어노테이션이 꼭 있어야 벌크업 연산 가능
+    @Query("update Member m set m.age = m.age+1 where m.age >= :age")
+    int bulkAgePlus(@Param("age") int age);
 }

@@ -1,5 +1,7 @@
 package study.datajpa.repository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +28,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MemberRepositoryTest {
     @Autowired MemberRepository memberRepository;
     @Autowired TeamRepository teamRepository;
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     public void testMember() {
@@ -207,5 +211,28 @@ class MemberRepositoryTest {
         assertThat(page.isFirst()).isTrue(); //첫번째 페이지가 맞는지
         assertThat(page.hasNext()).isTrue(); //다음 페이지가 있는지
 
+    }
+
+    @Test
+    public void bulkUpdate() {
+        //given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 19));
+        memberRepository.save(new Member("member3", 20));
+        memberRepository.save(new Member("member4", 21));
+        memberRepository.save(new Member("member5", 40));
+        //jpa의 기본동작 - save 후에 jpql이 나가기 전에 flush해서 db에 반영된다.
+
+        //when
+        int resultCount = memberRepository.bulkAgePlus(20);
+        /*em.flush(); //남아있는 것들이 db에 반영됨
+        em.clear(); //벌크연산 이후에는 영속성 컨텍스트를 다 날려야 한다.*/
+
+        List<Member> result = memberRepository.findByUsername("member5");
+        Member member5 = result.get(0); //벌크연산은 db에 바로 반영하는거라 영속성 컨텍스트에는 아직 member5의 나이가 40살이다. 벌크연산에서의 주의점!
+        System.out.println("member5 = "+ member5);
+
+        //then
+        assertThat(resultCount).isEqualTo(3);
     }
 }
