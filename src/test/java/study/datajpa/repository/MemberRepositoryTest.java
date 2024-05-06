@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 
 @SpringBootTest
 @Transactional
@@ -234,5 +235,36 @@ class MemberRepositoryTest {
 
         //then
         assertThat(resultCount).isEqualTo(3);
+    }
+
+    @Test
+    public void findMemberLazy() {
+        //given
+        //member1 -> teamA
+        //member2 -> teamB
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+        Member member1 = new Member("member1", 10, teamA);
+        Member member2 = new Member("member1", 10, teamB);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        em.flush(); //영속성 컨텍스트를 db에 반영시킴
+        em.clear(); //영속성 컨텍스트를 날려버림
+        
+        //when //N + 1 문제 -> 1이 Member, N이 Team
+        //지연로딩이므로 팀은 select하지 않음. select Member
+        //List<Member> members = memberRepository.findAll();
+        //List<Member> members = memberRepository.findMemberFetchJoin();
+        List<Member> members = memberRepository.findEntityGraphByUsername("member1");
+
+        for (Member member : members) {
+            System.out.println("member = " + member.getUsername());
+            System.out.println("member.teamClass = "+ member.getTeam().getClass()); //프록시 객체이다.
+            System.out.println("member.team = " + member.getTeam().getName());
+        }
+
     }
 }

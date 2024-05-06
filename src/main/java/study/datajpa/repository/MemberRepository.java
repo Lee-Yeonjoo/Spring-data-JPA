@@ -3,6 +3,7 @@ package study.datajpa.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -49,4 +50,19 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Modifying(clearAutomatically = true) //executeUpdate()를 호출해준다. 이 어노테이션이 꼭 있어야 벌크업 연산 가능
     @Query("update Member m set m.age = m.age+1 where m.age >= :age")
     int bulkAgePlus(@Param("age") int age);
+
+    @Query("select m from Member m left join fetch m.team")//페치조인. 멤버를 조회할 때 연관된 클래스도 한번에 조회한다.
+    List<Member> findMemberFetchJoin();
+
+    @Override
+    @EntityGraph(attributePaths = {"team"})  //JPQL을 작성하지 않아도 페치조인을 할 수 있다.
+    List<Member> findAll();
+
+    @EntityGraph(attributePaths = {"team"})
+    @Query("select m from Member m")  //JPQL을 짰는데 페치조인 추가하고 싶은 경우
+    List<Member> findMemberEntityGraph();
+
+    //@EntityGraph(attributePaths = {"team"}) //메소드명으로 쿼리 작성할 때도 엔티티 그래프 사용 가능
+    @EntityGraph("Member.all") //네임드 엔티티 그래프.
+    List<Member> findEntityGraphByUsername(@Param("username") String username);
 }

@@ -11,6 +11,7 @@ import lombok.*;
         name="Member.findByUsername", //이름은 아무거나 가능. 관례상 엔티티명.메소드명
         query="select m from Member m where m.username = :username"
 )
+@NamedEntityGraph(name = "Member.all", attributeNodes = @NamedAttributeNode("team")) //네임드 쿼리처럼 엔티티 그래프에 이름을 붙인다. jpa 표준 스펙
 public class Member {
 
     @Id @GeneratedValue
