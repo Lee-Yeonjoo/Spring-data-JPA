@@ -1,12 +1,11 @@
 package study.datajpa.repository;
 
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.QueryHint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
@@ -65,4 +64,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     //@EntityGraph(attributePaths = {"team"}) //메소드명으로 쿼리 작성할 때도 엔티티 그래프 사용 가능
     @EntityGraph("Member.all") //네임드 엔티티 그래프.
     List<Member> findEntityGraphByUsername(@Param("username") String username);
+
+    @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true")) //하이버네이트를 통해 변경감지가 동작 안하도록 최적화하는 기능을 쓸 수 있다.
+    Member findReadOnlyByUsername(String username);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE) //jpa에서 지원하는 락 모드를 데이터 jpa가 쉽게 쓰도록 어노테이션을 제공
+    List<Member> findLockByUsername(String username); //sql에서 'for update'가 붙는다. -> 방언에 따라 달라짐
+
 }

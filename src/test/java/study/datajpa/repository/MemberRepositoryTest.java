@@ -265,6 +265,41 @@ class MemberRepositoryTest {
             System.out.println("member.teamClass = "+ member.getTeam().getClass()); //프록시 객체이다.
             System.out.println("member.team = " + member.getTeam().getName());
         }
+    }
+
+    @Test
+    public void queryHint() {
+        //given
+        Member member1 = new Member("member1", 10);
+        memberRepository.save(member1);
+        em.flush(); //db에 반영만 되고, 영속성 컨텍스트가 아직 비워지진 않음
+        em.clear(); //영속성 컨텍스트가 다 날라간다. 이후에 무조건 db를 조회해야함.
+
+        //when
+        //Member findMember = memberRepository.findById(member1.getId()).get(); //실무에선 get()쓰면 안됨.
+        //findMember.setUsername("member2");
+
+        Member findMember = memberRepository.findReadOnlyByUsername("member1");
+        findMember.setUsername("member2"); //readOnly기 때문에 스냅샷을 만들지 않아서 변경되지x
+
+        em.flush(); //변경감지가 동작해서 db에 업데이트 쿼리가 나간다.
+        //변경감지의 단점 - 원본이 있어야 변경감지를 할 수 있어서 원본이랑 변경된 것, 두 개의 객체를 관리해야해서 메모리가 더 들어간다.
+        //변경할 일이 없더라도 변경감지할 준비를 해놓는다. -> 하이버네이트는 100% 조회용으로 최적화할 수 있다. jpa 표준은 제공x -> 힌트 사용해야함.
+
 
     }
+
+    @Test
+    public void lock() {
+        //given
+        Member member1 = new Member("member1", 10);
+        memberRepository.save(member1);
+        em.flush();
+        em.clear();
+
+        //when
+        List<Member> result = memberRepository.findLockByUsername("member1");
+
+    }
+
 }
