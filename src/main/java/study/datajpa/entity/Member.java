@@ -12,7 +12,7 @@ import lombok.*;
         query="select m from Member m where m.username = :username"
 )
 @NamedEntityGraph(name = "Member.all", attributeNodes = @NamedAttributeNode("team")) //네임드 쿼리처럼 엔티티 그래프에 이름을 붙인다. jpa 표준 스펙
-public class Member {
+public class Member extends BaseEntity{
 
     @Id @GeneratedValue
     @Column(name = "member_id")
