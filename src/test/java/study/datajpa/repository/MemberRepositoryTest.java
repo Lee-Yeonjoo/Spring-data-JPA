@@ -32,6 +32,8 @@ class MemberRepositoryTest {
     @PersistenceContext
     EntityManager em;
 
+    @Autowired MemberQueryRepository memberQueryRepository; //굳이 사용자 정의 리포지토리를 쓰지 않고, 이렇게 바로 써도 된다.
+
     @Test
     public void testMember() {
         Member member = new Member("memberA");
@@ -300,6 +302,11 @@ class MemberRepositoryTest {
         //when
         List<Member> result = memberRepository.findLockByUsername("member1");
 
+    }
+
+    @Test
+    public void callCustom() {
+        List<Member> result = memberRepository.findMemberCustom();
     }
 
 }
