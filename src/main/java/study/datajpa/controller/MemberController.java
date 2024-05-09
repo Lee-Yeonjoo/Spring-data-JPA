@@ -36,7 +36,7 @@ public class MemberController {
         return map;
     }
 
-    @PostConstruct //애플리케이션 실행될 때 실행됨
+    //@PostConstruct //애플리케이션 실행될 때 실행됨
     public void init() {
         //memberRepository.save(new Member("userA"));
         for (int i = 0; i < 100; i++) {
