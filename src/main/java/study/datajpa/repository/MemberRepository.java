@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom{ //스프링 data jpa가 MemberRepositoryCustom의 구현체를 엮어서 사용할 수 있게 해준다.
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom, JpaSpecificationExecutor<Member> { //스프링 data jpa가 MemberRepositoryCustom의 구현체를 엮어서 사용할 수 있게 해준다.
 
     //List<Member> findByUsername(String username); //쿼리 메소드 기능. 스프링 데이터 jpa가 알아서 만들어준다.
 
