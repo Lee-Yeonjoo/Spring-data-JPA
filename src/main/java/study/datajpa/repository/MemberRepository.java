@@ -74,4 +74,14 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     //List<UsernameOnly> findProjectionsByUsername(@Param("username") String username); //반환타입에 인터페이스를 넣는다.
 
     <T> List<T> findProjectionsByUsername(@Param("username") String username, Class<T> type); //반환타입에 인터페이스를 넣는다. //타입을 넘겨서 지정할 수 있다. -> 동적 프로젝션.
+
+    @Query(value = "select * from member where username = ?", nativeQuery = true) //네이티브 쿼리를 true로 하면 된다.
+    Member findByNativeQuery(String username);
+
+    @Query(value = "select m.member_id as id, m.username, t.name as teamName " +
+            "from member m left join team t",
+    countQuery = "select count(*) from member", //네이티브 쿼리라서 카운트 쿼리 별도로 짜야함 페이징때문에.
+    nativeQuery = true)
+    Page<MemberProjection> findByNativeProjection(Pageable pageable);
+
 }
