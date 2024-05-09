@@ -71,4 +71,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     @Lock(LockModeType.PESSIMISTIC_WRITE) //jpa에서 지원하는 락 모드를 데이터 jpa가 쉽게 쓰도록 어노테이션을 제공
     List<Member> findLockByUsername(String username); //sql에서 'for update'가 붙는다. -> 방언에 따라 달라짐
 
+    //List<UsernameOnly> findProjectionsByUsername(@Param("username") String username); //반환타입에 인터페이스를 넣는다.
+
+    <T> List<T> findProjectionsByUsername(@Param("username") String username, Class<T> type); //반환타입에 인터페이스를 넣는다. //타입을 넘겨서 지정할 수 있다. -> 동적 프로젝션.
 }
